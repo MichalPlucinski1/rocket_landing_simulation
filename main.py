@@ -6,11 +6,20 @@ import matplotlib.pyplot as plt
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 def F(h, v):
-    if h < 3000 and v > 10:
-        return Fmax
-    if v < 10:
-        return Fmax * 0
-    return 0
+    k1 = 1 * Ms + 0
+    k2 = 1 * 1/g + 0
+    result = k1 * v + k2 * h * -1 * pow(v, 2) / (2 * h)
+    print("k1: ", k1 * v)
+    print("k2: ",  k2 * h * -1 * pow(v, 2) / (2 * h) )
+
+    print(result)
+    if result < 0:
+        return 0
+    else:
+        if result > Fmax:
+            return result
+        else:
+            return result
 
 
 # Press the green button in the gutter to run the script.
@@ -20,12 +29,12 @@ if __name__ == '__main__':
 
     timestamp = 5  # czas miedzy pomiarami
     tSimEnd = 60
-    hStart = 6000  # wysokosc poczatkowa
+    hStart = 10000  # wysokosc poczatkowa
     vStart = 0  # predkosc m/s poczatkowa, dodatnia gdy zbliza się
 
     Ms = 500  # masa łazika
     Mp = 6.41 * pow(10, 23)  # masa planety
-    Rp = 3389000  # km promien
+    Rp = 3389000  # m promien
     g = G * Mp / (Rp * Rp)  # grawitacja planety
 
     hCurr = hStart
@@ -59,11 +68,11 @@ if __name__ == '__main__':
         print("v: ", v[i])
         print("h: ", h[i])
 
-        if hCurr <= 0 and vCurr > 5:
+        if hCurr <= 0 and vCurr > 10:
             print("crash")
             break
         else:
-            if hCurr <= 0:
+            if hCurr <= 0 and vCurr < 10:
                 print("Landed!")
                 break
 
