@@ -13,7 +13,7 @@ def time_to_reach_distance_num(h, v, a):
     if v < 0:
         return -1
 
-    time = 1
+    time = -1
     timestamp = 1
     while h >= 0:
         v += a * timestamp
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     Fcurr = 0  # obecna przepustnica
 
     time_to_distance_num = time_to_reach_distance_num(hStart, vCurr, aCurr)
-    time_to_distance_an = time_to_reach_distance_an(hStart, vCurr, aCurr)
+    #time_to_distance_an = time_to_reach_distance_an(hStart, vCurr, aCurr)
 
     dt = []
     h = []
@@ -69,11 +69,11 @@ if __name__ == '__main__':
 
     while(t < tSimEnd):
         print("\n", t, ":\tt num:", time_to_distance_num )
-        print(t, ":\tt an:", time_to_distance_an )
+        #print(t, ":\tt an:", time_to_distance_an )
         print("\td:", hCurr)
         print("\tv:", vCurr)
-        time_to_distance_num = time_to_reach_distance_num(hStart, vCurr, aCurr)
-        time_to_distance_an = time_to_reach_distance_an(hStart, vCurr, aCurr)
+        time_to_distance_num = time_to_reach_distance_num(hCurr, vCurr, aCurr)
+        #time_to_distance_an = time_to_reach_distance_an(hCurr, vCurr, aCurr)
         dt.append(t)
 
         a.append(aCurr)
@@ -101,6 +101,7 @@ if __name__ == '__main__':
     plt.title("Wysokość")
     plt.xlabel("Czas [s]")
     plt.ylabel("Wysokość [m]")
+    plt.grid(True)
 
     #
     plt.subplot(1, 3, 2)
@@ -108,6 +109,7 @@ if __name__ == '__main__':
     plt.title("prędkość")
     plt.xlabel("Czas [s]")
     plt.ylabel("v")
+    plt.grid(True)
 
     plt.subplot(1, 3, 3)
     plt.plot(dt, a)
@@ -115,6 +117,7 @@ if __name__ == '__main__':
     plt.title("przyspieszenie")
     plt.xlabel("Czas [s]")
     plt.ylabel("a")
+    plt.grid(True)
     plt.show()
 
     plt.subplot(1, 3, 1)
@@ -123,6 +126,7 @@ if __name__ == '__main__':
     plt.title("ciąg")
     plt.xlabel("Czas [s]")
     plt.ylabel("F")
+    plt.grid(True)
 
 
 
