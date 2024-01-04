@@ -11,7 +11,7 @@ def time_to_reach_distance_num(h, v, a):
     if v < 0:
         return -1
 
-    time = -1
+    time = 0
     timestamp = 0.2
     while h >= 0 and v >= 0:
         v += a * timestamp
@@ -21,19 +21,37 @@ def time_to_reach_distance_num(h, v, a):
     return time
 
 
+def distance_to_reach_velocity(h, v, a):
+
+    time = 0
+    timestamp = 0.2
+    while h >= 0 and v >= 0:
+        v += a * timestamp
+        h -= v * timestamp
+
+        time += timestamp
+    return time
+
+
+
+
+
+
 def time_to_reach_with_thrust(h, v):
 
 
     time_stamp = 0.2
-    print("\tFsum:", Fsum)
     if v < 0:
         return 0
+    v = v + g
+
+    print("\tFsum:", Fsum)
+
     time = -1
     while v > 0:
         v += Fsum * time_stamp
         h -= v * time_stamp
         if h <= 0:
-            print("TOO LESS POWER TO STOP BEFORE CRUSH!!!")
             return -1
 
 
@@ -105,7 +123,7 @@ if __name__ == '__main__':
         h.append(hCurr)
         f.append(F(vCurr, hCurr) / Ms)
 
-        if time_to_distance_num <= thrust_time_to_distance_num and vCurr > 0 and hCurr > 0:
+        if thrust_time_to_distance_num == -1:
             aCurr = Fsum
         else:
             aCurr = g  # (F(vCurr, hCurr) / Ms)

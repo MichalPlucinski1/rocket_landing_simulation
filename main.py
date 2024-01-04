@@ -1,6 +1,4 @@
 import matplotlib.pyplot as plt
-
-
 # This is a sample Python script.
 
 # Press Shift+F10 to execute it or replace it with your code.
@@ -11,8 +9,9 @@ def time_to_reach_distance_num(h, v, a):
     if v < 0:
         return -1
 
-    time = -1
+
     timestamp = 0.2
+    time = -timestamp
     while h >= 0 and v >= 0:
         v += a * timestamp
         h -= v * timestamp
@@ -23,12 +22,14 @@ def time_to_reach_distance_num(h, v, a):
 
 def time_to_reach_with_thrust(h, v):
 
-
-    time_stamp = 0.2
     print("\tFsum:", Fsum)
+
     if v < 0:
         return 0
-    time = -1
+
+    time_stamp = 0.21
+    time = -time_stamp
+
     while v > 0:
         v += Fsum * time_stamp
         h -= v * time_stamp
@@ -42,13 +43,26 @@ def time_to_reach_with_thrust(h, v):
 
 
 def F(velocity, distance):
-    # Required to be thrust to land safely
+    # Required thrust to land safely
     if distance <= 0:
         return 0  # If distance is 0 or negative, no thrust is needed (already landed)
     else:
-        required_thrust = Ms * (velocity ** 2) / (2 * distance)
+        required_thrust = ((velocity ** 2) / (2 * distance)) / Ms + g
         return required_thrust  # Limit thrust to maximum 1500 Newtons
 
+
+def f_thrust():
+    required_thrust = F(vCurr, hCurr)
+
+    if required_thrust >= Fmax * 0.75:
+        return -Fmax
+    elif required_thrust >= Fmax * 0.50:
+        return -Fmax * 0.75
+    elif required_thrust >= Fmax * 0.25:
+        return -Fmax * 0.50
+    else:
+        return -Fmax * 0.25
+    #Fsum = -Fmax / Ms + g
 
 
 # Press the green button in the gutter to run the script.
@@ -75,7 +89,7 @@ if __name__ == '__main__':
     Fmax = 15000  # N maksymalna przepustnica
     Fcurr = 0  # obecna przepustnica
 
-    Fsum =  -Fmax / Ms + g
+    Fsum = -Fmax / Ms + g
 
     time_to_distance_num = time_to_reach_distance_num(hStart, vCurr, aCurr)
     thrust_time_to_distance_num = time_to_reach_with_thrust(hStart, vCurr)
@@ -97,16 +111,17 @@ if __name__ == '__main__':
         print("\tv:", vCurr)
         time_to_distance_num = time_to_reach_distance_num(hCurr, vCurr, aCurr)
         thrust_time_to_distance_num = time_to_reach_with_thrust(hCurr, vCurr)
-        # time_to_distance_an = time_to_reach_distance_an(hCurr, vCurr, aCurr)
         dt.append(t)
 
         a.append(aCurr)
         v.append(vCurr)
         h.append(hCurr)
-        f.append(F(vCurr, hCurr) / Ms)
+        #f.append(F(vCurr, hCurr) / Ms)
 
         if time_to_distance_num <= thrust_time_to_distance_num and vCurr > 0 and hCurr > 0:
-            aCurr = Fsum
+            Fsum = f_thrust() / Ms + g
+            aCurr = Fsum = -Fmax / Ms + g
+
         else:
             aCurr = g  # (F(vCurr, hCurr) / Ms)
         vCurr += aCurr * t_step
