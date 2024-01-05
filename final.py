@@ -9,12 +9,13 @@ def should_launch_thrust():
     sim_without_thrust = struct.unpack('ffff', time_to_reach_ground(0))
 
     # print("t:", t, "\nwith th:", sim_with_thrust, "\nwithout:", sim_without_thrust)
+    print(sim_with_thrust_1)
 
-    if sim_with_thrust_1[1] - vCurr < 0:
+    if sim_with_thrust_1[1] - vCurr * (t_step + 1) < 0:
         return 1
-    elif sim_with_thrust_05[1] - vCurr < 0 and hCurr < 1000:
+    elif sim_with_thrust_05[1] - vCurr * (t_step + 1) < 0 and hCurr < 1000:
         return 0.5
-    elif sim_with_thrust_025[1] - vCurr < 0 and hCurr < 500:
+    elif sim_with_thrust_025[1] - vCurr * (t_step + 1) < 0 and hCurr < 500:
         return 0.25
 
     return 0
@@ -45,16 +46,20 @@ if __name__ == '__main__':
     G = 6.67 * pow(10, -11)  # stała grawitacyjna
 
 
-    tSimEnd = 300
+    tSimEnd = 1000
     t_step = 0.5    #czas miedzy pomiarami
     t = 0
-    hStart = 7000  # wysokosc poczatkowa
+    hStart = 6000 # wysokosc poczatkowa
     vStart = 10  # predkosc m/s poczatkowa, dodatnia gdy zbliza się
+
+
 
     Ms = 1000  # masa łazika
     Mp = 6.41 * pow(10, 23)  # masa planety
     Rp = 3389000  # km promien
     g = G * Mp / (Rp * Rp)  # grawitacja planety
+
+    max_impact_force = 500
 
     hCurr = hStart
     vCurr = vStart
@@ -82,20 +87,22 @@ if __name__ == '__main__':
 
         thr = should_launch_thrust()
         aCurr = thr * -Tmax / Ms + g
-        print("t:", t, "h:", hCurr, "applying thrust:", should_launch_thrust())
+        print("t:", t, "h:", hCurr, "applying thrust:", thr)
 
         vCurr += aCurr * t_step
         hCurr -= vCurr * t_step
 
         t += t_step
 
-        if hCurr <= 0 and vCurr > 10:
-            print("crash at speed", vCurr)
+        if hCurr <= 0:
+            impact_force = vCurr * Ms
+            if impact_force > max_impact_force:
+                print("Crush!")
+            else:
+                print("Landed!")
+            print("With speed:",vCurr,"and impact force of:",impact_force)
+
             break
-        else:
-            if hCurr <= 0:
-                print("Landed! at speed", vCurr)
-                break
 
     plt.subplot(1, 4, 1)
     plt.plot(dt, h)
