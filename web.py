@@ -16,7 +16,7 @@ G = 6.67 * pow(10, -11)  # gravitational constant
 #generowanie strony
 
 app.layout = html.Div([
-    html.H1("Rocket Landing Simulation"),
+    html.H1("Symulacja lądowania rakiety na Marsie"),
 
     html.Label("Czas sygnału:"),
     dcc.Slider(
@@ -66,21 +66,6 @@ app.layout = html.Div([
 # symulacja
 
 def run_simulation(t_step, vStart, hStart):
-    def final_speed(h_last, v_last, a_last):
-        d=v_last*v_last-4*(a_last/2)*(-h_last)
-        print(d)
-        if d>0:
-            sol1=(-v_last+math.sqrt(d))/a_last
-            if 0<sol1<0.5:
-                v_impact=v_last+a_last*sol1
-                print("Success")
-                print(v_impact)
-            sol2 = (-v_last - math.sqrt(d)) / a_last
-            if 0<sol2<0.5:
-                v_impact = v_last + a_last * sol2
-                print("Success")
-                print(v_impact)
-
     def should_launch_thrust():
         sim_with_thrust_1 = struct.unpack('ffff', time_to_reach_ground(1))
         sim_with_thrust_05 = struct.unpack('ffff', time_to_reach_ground(0.5))
@@ -157,34 +142,31 @@ def run_simulation(t_step, vStart, hStart):
         print(aCurr, "t:", t, "h:", hCurr, "v:", vCurr, "applying thrust:", should_launch_thrust())
         aCurr = thr * -Tmax / Ms + g
 
-
+        hCurr -= vCurr * t_step + 1/2*aCurr*t_step*t_step
         vCurr += aCurr * t_step
-        hCurr -= v[-1] * t_step + 1/2*aCurr*t_step*t_step
-
         t += t_step
         if hCurr <= 0:
-            #final_speed(h[-1],v[-1],a[-1])
-            if v[-1]>0:
-                v_final=v[-1]
-            if vCurr>0:
+            if v[-1] > 0:
+                v_final = v[-1]
+            if vCurr > 0:
                 v_final=vCurr
             impact_force = Ms * v_final
             if impact_force > max_impact_force:
-                print("Crush!")
-                crush_check="Crush!"
+                print("Rakieta rozbiła się")
+                crush_check="Rakieta rozbiła się"
             else:
-                print("Landed!")
-                crush_check="Landed!"
+                print("Rakieta wylądowała!")
+                crush_check = "Rakieta wylądowała!"
                 v_final = round(v_final, 2)
                 impact_force = round(impact_force, 2)
-            print(aCurr,"With speed:", v_final, "height", hCurr, "and impact force of:", impact_force)
+            print(aCurr, "With speed:", v_final, "height", hCurr, "and impact force of:", impact_force)
 
             break
     # Your existing simulation code here...
     # ... (Copy the entire simulation code here and modify as needed)
 
     # Return the updated figures for each graph
-    return crush_check, v_final, impact_force, *generate_figures(dt,h,v,a, thrust_applied)
+    return crush_check, f'{v_final} [m/s]', f'{impact_force} [N]', *generate_figures(dt,h,v,a, thrust_applied)
 
 def generate_figures(dt, h, v, a, thrust_applied):
     fig_height = plt_to_dash(dt, h, "Wysokość", "Czas [s]", "Wysokość [m]")
